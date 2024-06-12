@@ -1,6 +1,9 @@
 import psycopg2
 
 class DBManager:
+    '''
+    Класс для подключения к БД
+    '''
     def __init__(self, connection_details, frame, create_table):
         self.user = connection_details['login']
         self.password = connection_details['password']
@@ -12,15 +15,24 @@ class DBManager:
         self.create_table = create_table
 
     def connect(self):
+        '''
+        метод создающий подключение и курсор
+        '''
         self.conn = psycopg2.connect(dbname=self.dbname, host=self.host, port=self.port, user=self.user, password=self.password)
         self.cursor = self.conn.cursor()
 
     def commit_and_close_connection(self):
+        '''
+        метод делающий коммит и закрывающий подключение
+        '''
         self.conn.commit()
         self.cursor.close()
         self.conn.close()
 
     def fill_tables(self, get_vacancies, COMPANIES_LIST):
+        '''
+        метод наполняющий таблицы данными
+        '''
         data = get_vacancies(COMPANIES_LIST)
         self.connect()
         vacancies = data.get('vacancies')
@@ -36,6 +48,9 @@ class DBManager:
         self.commit_and_close_connection()
 
     def companies_and_vacancies_count(self):
+        '''
+        метод выводит все компании и сколько у них вакансий
+        '''
         self.connect()
 
         self.cursor.execute("SELECT companies.company_name, COUNT(*) FROM companies JOIN vacancies USING(company_id) GROUP BY companies.company_name;")
@@ -45,6 +60,9 @@ class DBManager:
         self.table = self.create_table(self.frame, data, heading, self.table)
 
     def get_all_vacancies(self):
+        '''
+        метод выводит все вакансии
+        '''
         self.connect()
         self.cursor.execute("SELECT * FROM vacancies;")
         heading = ('vacancy_id', 'company_id', 'vacancy_name', 'salary', 'url')
@@ -53,6 +71,9 @@ class DBManager:
         self.table = self.create_table(self.frame, data, heading, self.table)
 
     def get_avg_salary(self):
+        '''
+        метод выводит среднюю зарплату по компании
+        '''
         self.connect()
         self.cursor.execute("SELECT companies.company_name, AVG(vacancies.salary) FROM companies JOIN vacancies USING(company_id) GROUP BY companies.company_name;")
         heading = ('company_name', 'avg_salary')
@@ -61,6 +82,9 @@ class DBManager:
         self.table = self.create_table(self.frame, data, heading, self.table)
 
     def get_vacancies_with_higher_salary(self):
+        '''
+        метод выводит вакансии с зарплатой выше средней
+        '''
         self.connect()
         self.cursor.execute("SELECT * FROM vacancies WHERE salary > (SELECT AVG(salary) FROM vacancies);")
         heading = ('vacancy_id', 'company_id', 'vacancy_name', 'salary', 'url')
@@ -69,6 +93,9 @@ class DBManager:
         self.table = self.create_table(self.frame, data, heading, self.table)
 
     def get_vacancies_with_keyword(self, func):
+        '''
+        осуществляет поиск в названии вакансии по ключевому слову
+        '''
         keyword = f"'%{func()}%'"
         self.connect()
         self.cursor.execute(f"SELECT * FROM vacancies WHERE vacancy_name LIKE({keyword});")
@@ -78,11 +105,3 @@ class DBManager:
         self.table = self.create_table(self.frame, data, heading, self.table)
 
         
-
-
-
-
-        
-
-
-

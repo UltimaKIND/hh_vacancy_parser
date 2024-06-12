@@ -18,11 +18,10 @@ COMPANIES_LIST = [{'name': 'Альфа-банк', 'id': '80'},
         {'name': 'Банк ВТБ', 'id': '4181'},
         {'name': 'МТС Финтех', 'id': '4496'}]
 
-
-
-
-
 def get_vacancies_from(companies_list):
+    '''
+    получает списки компаний и их вакансий
+    '''
     url = 'https://api.hh.ru/employers'
     headers = {'User-Agent': 'HH-User_Agent'}
     params = {'page': 0, 'per_page':100}
@@ -54,6 +53,9 @@ def get_vacancies_from(companies_list):
     return {'companies': companies, 'vacancies': vacancies}
 
 def create_table(frame, data, heading, table):
+    '''
+    создает таблицу в окне
+    '''
     if table is not None:
         table.destroy()
     columns = heading
@@ -62,13 +64,14 @@ def create_table(frame, data, heading, table):
     for element in columns:
         tree.heading(element, text=element, anchor=W)
     
-    for person in data:
-        tree.insert("", END, values=person)
+    for value in data:
+        tree.insert("", END, values=value)
     return tree
-
-
         
 def save_conn_details(conn_details, key, path):
+    '''
+    шифрует и сохраняет данные подключения
+    '''
     data = conn_details
     blocks = []
     while data:
@@ -101,6 +104,9 @@ def save_conn_details(conn_details, key, path):
         f.writelines(binary)
 
 def get_conn_details(key, path):
+    '''
+    читает и дешифрует данные подключения
+    '''
     data = None
     with open(path, 'r') as f:
         data = f.read()
@@ -133,15 +139,24 @@ def get_conn_details(key, path):
     return message
     
 def convert_to_json(data):
+    '''
+    конвертирует в json
+    '''
     result = {}
     for key, value in data.items():
         result[key] = value.get()
     return json.dumps(result)
 
 def convert_from_json(data):
+    '''
+    конвертирует из json
+    '''
     return json.loads(data)
 
 def ask(entry_window, data, conn_details, func, convert_func, main):
+    '''
+    запрашивает ключ
+    '''
     keyword = askstring('keyword', 'enter a keyword', show='*', parent=entry_window)
     func(convert_func(data), keyword, conn_details)
     main['main_label'].configure(text='создан файл конфигурации подключения')
@@ -149,10 +164,16 @@ def ask(entry_window, data, conn_details, func, convert_func, main):
     entry_window.destroy()
 
 def ask_keyword():
+    '''
+    запрашивает поисковой запрос
+    '''
     keyword = askstring('ключевое слово', 'поиск по ключевому слову')
     return keyword
 
 def make_connection(window, label, conn_details, func, main):
+    '''
+    создает подключение
+    '''
     keyword = askstring('keyword', 'enter a keyword', show='*', parent=window)
     con_details = convert_from_json(func(keyword, conn_details))
     try:
@@ -186,6 +207,9 @@ def make_connection(window, label, conn_details, func, main):
         label.configure(text = e)
 
 def construct_entry_fields(conn_details, ask, func, convert_func, main):
+    '''
+    создает окно с полями ввода
+    '''
     entry_window = Tk()
     entry_window.title('подключение к базе данных')
     entry_window.geometry('300x300')
@@ -207,8 +231,10 @@ def construct_entry_fields(conn_details, ask, func, convert_func, main):
     entry_window.columnconfigure(index=1, weight=1)
 
 def check_connection(conn_details, path):
+    '''
+    проверка подключения
+    '''
     if os.path.exists(conn_details):
         return get_conn_details(conn_details, path)
         
-
 
