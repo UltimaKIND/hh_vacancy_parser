@@ -201,8 +201,6 @@ def make_connection(window, label, conn_details, func, main):
         for c in range(10):
             frame_button.columnconfigure(index=c, weight=1)
 
-        
-
     except Exception as e:
         label.configure(text = e)
 
