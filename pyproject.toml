@@ -1,0 +1,16 @@
+[tool.poetry]
+name = "coursework-5"
+version = "0.1.0"
+description = "Курсовая работа 5. Работа с базами данных"
+authors = ["UltimaKIND <minion9@mail.ru>"]
+license = "free"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+requests = "^2.32.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
