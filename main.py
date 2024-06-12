@@ -7,7 +7,10 @@ from src.entry_with_placeholder import EntryWithPlaceholder
 import src.utils as utils
 
 conn_details = './data/conn_details'
-
+if os.path.isdir('./data'):
+    pass
+else:
+    os.system('mkdir ./data')
 
 window = Tk()
 window.title('главное окно окно')
@@ -31,6 +34,5 @@ else:
     main_button.configure(text='подключиться к базе данных', command=lambda: utils.construct_entry_fields(conn_details, utils.ask, utils.save_conn_details, utils.convert_to_json, main))
 
 window.mainloop()
-
 
 
